@@ -593,7 +593,7 @@ function btq_booking_tc_admin_debug_page() {
 		
 		<div style="background-color: white;">
 			<?php btq_booking_tc_admin_debug_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_es') )); ?>
-			<?php btq_booking_tc_admin_debug_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_en') )); ?>
+			<?php btq_booking_tc_admin_debug_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_us') )); ?>
 		</div>
 		
 		<!--
@@ -995,7 +995,7 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 			$str_book_now = 'Reservar Ahora';
 		break;
 		case 'en':
-			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_en') ); /* 95698 */
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_us') ); /* 95698 */
 			$currency     = 'USD';
 			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_us') ); /* 13671 */
 			$str_book_now = 'Book Now';

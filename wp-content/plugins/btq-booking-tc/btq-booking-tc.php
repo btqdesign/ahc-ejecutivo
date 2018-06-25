@@ -6,8 +6,8 @@
  * Version: 0.1.0
  * Author: BTQ Design
  * Author URI: http://btqdesign.com/
- * Requires at least: 4.9.5
- * Tested up to: 4.9.5
+ * Requires at least: 4.9.6
+ * Tested up to: 4.9.6
  * 
  * Text Domain: btq-booking-tc
  * Domain Path: /languages
@@ -21,20 +21,10 @@
 // Exit if accessed directly
 defined('ABSPATH') or die('No script kiddies please!');
 
-
-/*
-// Register settings using the Settings API 
-function wpdocs_register_my_setting() {
-    register_setting( 'my-options-group', 'my-option-name', 'intval' ); 
-} 
-add_action( 'admin_init', 'wpdocs_register_my_setting' );
- 
-// Modify capability
-function wpdocs_my_page_capability( $capability ) {
-    return 'edit_others_posts';
-}
-add_filter( 'option_page_capability_my-options-group', 'wpdocs_my_page_capability' );
-*/
+/** 
+ * Establece el dominio correcto para la carga de traducciones
+ */
+load_plugin_textdomain('btq-booking-tc', false, basename( dirname( __FILE__ ) ) . '/languages');
 
 /**
  * Almacena en un archivo el contenido de una variable.
@@ -79,6 +69,7 @@ function btq_booking_tc_log($file_name, $var, $same_file = false){
 	}
 }
 
+
 /**
  * Genera un elemento en el menú del escritorio del wp-admin de WordPress.
  *
@@ -115,8 +106,26 @@ function btq_booking_tc_admin_menu() {
     	'btq_booking_tc_debug',
     	'btq_booking_tc_admin_debug_page'
     );
+    /* Manda a llamar la funcion para declarar los ajustes y opciones del plug-in */
+    add_action( 'admin_init', 'btq_booking_tc_register_settings' );
 }
 add_action( 'admin_menu', 'btq_booking_tc_admin_menu' );
+
+/**
+ * Declara los ajustes y opciones del plug-in
+ */
+function btq_booking_tc_register_settings() {
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_soap_sales_channel_info_id');
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_soap_username');
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_soap_password');
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_soap_to_action_pals');
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_soap_to_action_full');
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_hotel_code_us', array('type' => 'integer'));
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_hotel_code_es', array('type' => 'integer'));
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_hotel_themeid_us', array('type' => 'integer'));
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_hotel_themeid_es', array('type' => 'integer'));
+	register_setting('btq-booking-tc-settings', 'btq_booking_tc_color_principal');
+}
 
 /**
  * Genera la página de ajustes para el plugin.
@@ -133,20 +142,44 @@ function btq_booking_tc_admin_settings_page() {
 			<?php do_settings_sections( 'btq-booking-tc-settings' ); ?>
 			<table class="form-table">
 				<tr valign="top">
-					<th scope="row"><?php _e('SOAP Header To', 'btq-booking-tc'); ?></th>
-					<td><input type="number" name="soap_header_to" value="<?php echo esc_attr( get_option('soap_header_to') ); ?>" /></td>
+					<th scope="row"><label for="btq_booking_tc_soap_sales_channel_info_id"><?php _e('Sales channel info ID', 'btq-booking-tc'); ?></label></th>
+					<td><input type="text" name="btq_booking_tc_soap_sales_channel_info_id" value="<?php echo esc_attr( get_option('btq_booking_tc_soap_sales_channel_info_id') ); ?>" /></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e('SOAP Header Action', 'btq-booking-tc'); ?></th>
-					<td><input type="number" name="soap_header_action" value="<?php echo esc_attr( get_option('soap_header_action') ); ?>" /></td>
+					<th scope="row"><label for="btq_booking_tc_soap_username"><?php _e('Username', 'btq-booking-tc'); ?></label></th>
+					<td><input type="text" name="btq_booking_tc_soap_username" value="<?php echo esc_attr( get_option('btq_booking_tc_soap_username') ); ?>" /></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e('Hotel code english language', 'btq-booking-tc'); ?></th>
-					<td><input type="number" name="hotel_code_us" value="<?php echo esc_attr( get_option('hotel_code_us') ); ?>" /></td>
+					<th scope="row"><label for="btq_booking_tc_soap_password"><?php _e('Password', 'btq-booking-tc'); ?></label></th>
+					<td><input type="password" name="btq_booking_tc_soap_password" value="<?php echo esc_attr( get_option('btq_booking_tc_soap_password') ); ?>" /></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><?php _e('Hotel code spanish language', 'btq-booking-tc'); ?></th>
-					<td><input type="number" name="hotel_code_es" value="<?php echo esc_attr( get_option('hotel_code_es') ); ?>" /></td>
+					<th scope="row"><label for="btq_booking_tc_soap_to_action_pals"><?php _e('SOAP Action PALS To', 'btq-booking-tc'); ?></label></th>
+					<td><input type="url" name="btq_booking_tc_soap_to_action_pals" value="<?php echo esc_attr( get_option('btq_booking_tc_soap_to_action_pals') ); ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="btq_booking_tc_soap_to_action_full"><?php _e('SOAP Action FULL To', 'btq-booking-tc'); ?></label></th>
+					<td><input type="url" name="btq_booking_tc_soap_to_action_full" value="<?php echo esc_attr( get_option('btq_booking_tc_soap_to_action_full') ); ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="btq_booking_tc_hotel_code_us"><?php _e('Hotel code english language', 'btq-booking-tc'); ?></label></th>
+					<td><input type="number" name="btq_booking_tc_hotel_code_us" value="<?php echo esc_attr( get_option('btq_booking_tc_hotel_code_us') ); ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="btq_booking_tc_hotel_code_es"><?php _e('Hotel code spanish language', 'btq-booking-tc'); ?></label></th>
+					<td><input type="number" name="btq_booking_tc_hotel_code_es" value="<?php echo esc_attr( get_option('btq_booking_tc_hotel_code_es') ); ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="btq_booking_tc_hotel_themeid_us"><?php _e('Theme id english language', 'btq-booking-tc'); ?></label></th>
+					<td><input type="number" name="btq_booking_tc_hotel_themeid_us" value="<?php echo esc_attr( get_option('btq_booking_tc_hotel_themeid_us') ); ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="btq_booking_tc_hotel_themeid_es"><?php _e('Theme id spanish language', 'btq-booking-tc'); ?></label></th>
+					<td><input type="number" name="btq_booking_tc_hotel_themeid_es" value="<?php echo esc_attr( get_option('btq_booking_tc_hotel_themeid_es') ); ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="btq_booking_tc_color_principal"><?php _e('Default color', 'btq-booking-tc'); ?></label></th>
+					<td><input type="text" name="btq_booking_tc_color_principal" value="<?php echo esc_attr( get_option('btq_booking_tc_color_principal') ); ?>" /></td>
 				</tr>
 			</table>
 			<?php submit_button(); ?>
@@ -193,7 +226,7 @@ function btq_booking_tc_soap_query_string($hotelCode, $dateRangeStart, $dateRang
 	
 	if ($typeQuery == 'packages'){
 		// Paquete
-		$wsaTo = 'https://ota2.ihotelier.com/OTA_Seamless/services/FullDataService';
+		$wsaTo = esc_attr( get_option('btq_booking_tc_soap_to_action_full') ); /* https://ota2.ihotelier.com/OTA_Seamless/services/FullDataService */
 		$wsaAction = 'FULL';
 		
 		$soapBody = '
@@ -203,7 +236,7 @@ function btq_booking_tc_soap_query_string($hotelCode, $dateRangeStart, $dateRang
 					<Source>
 						<RequestorID ID="1" Type="1" />
 						<BookingChannel Type="18">
-							<CompanyName Code="AHC" />
+							<CompanyName Code="'. esc_attr( get_option('btq_booking_tc_soap_sales_channel_info_id') ) .'" />
 						</BookingChannel>
 					</Source>
 				</POS>
@@ -236,7 +269,7 @@ function btq_booking_tc_soap_query_string($hotelCode, $dateRangeStart, $dateRang
 	}
 	else{
 		// Habitaciones
-		$wsaTo = 'https://ota2.ihotelier.com/OTA_Seamless/services/PropertyAvailabilityService';
+		$wsaTo = esc_attr( get_option('btq_booking_tc_soap_to_action_pals') ); /* https://ota2.ihotelier.com/OTA_Seamless/services/PropertyAvailabilityService */
 		$wsaAction = 'PALS';
 		
 		$soapBody = '
@@ -246,7 +279,7 @@ function btq_booking_tc_soap_query_string($hotelCode, $dateRangeStart, $dateRang
 					<Source>
 						<RequestorID ID="1" Type="1" />
 						<BookingChannel Type="18">
-							<CompanyName Code="AHC" />
+							<CompanyName Code="'. esc_attr( get_option('btq_booking_tc_soap_sales_channel_info_id') ) .'" />
 						</BookingChannel>
 					</Source>
 				</POS>
@@ -290,7 +323,7 @@ function btq_booking_tc_soap_query_string($hotelCode, $dateRangeStart, $dateRang
 			<wsa:To>'. $wsaTo .'</wsa:To>
 			<wsa:Action>'. $wsaAction .'</wsa:Action>
 			<wsa:From>
-				<SalesChannelInfo ID="AHC" />
+				<SalesChannelInfo ID="'. esc_attr( get_option('btq_booking_tc_soap_sales_channel_info_id') ) .'" />
 			</wsa:From>
 			<wsse:Security>
 				<wsu:Timestamp>
@@ -298,8 +331,8 @@ function btq_booking_tc_soap_query_string($hotelCode, $dateRangeStart, $dateRang
 					<wsu:Expires>2011-12-25T16:12:46+05:30</wsu:Expires>
 				</wsu:Timestamp>
 				<wsse:UsernameToken>
-					<wsse:Username>ADMIN</wsse:Username>
-					<wsse:Password>C0nn3ct0taAp!</wsse:Password>
+					<wsse:Username>'. esc_attr( get_option('btq_booking_tc_soap_username') ) .'</wsse:Username>
+					<wsse:Password>'. esc_attr( get_option('btq_booking_tc_soap_password') ) .'</wsse:Password>
 				</wsse:UsernameToken>
 			</wsse:Security>
 		</soap:Header>';
@@ -448,11 +481,11 @@ function btq_booking_tc_admin_debug_rooms($hotelCode = '131328') {
 	}
 	?>
 	</table>
-	<?php /*
+	
 	<pre>
 		<?php $RoomAmenitiesDebug = var_export($RoomAmenities); echo htmlentities($RoomAmenitiesDebug); ?>
 	</pre>
-	*/ ?>
+	
 	<?php
 	
 	for ($i = 0; $i < count($RoomAmenities); $i++){
@@ -502,11 +535,11 @@ function btq_booking_tc_admin_debug_packages($hotelCode = '131328') {
 	}
 	?>
 	</table>
-	<?php /*
+	
 	<pre>
 		<?php $RoomAmenitiesDebug = var_export($RoomAmenities); echo htmlentities($RoomAmenitiesDebug); ?>
 	</pre>
-	*/ ?>
+	
 	<?php
 	
 	for ($i = 0; $i < count($RoomAmenities); $i++){
@@ -541,6 +574,7 @@ function btq_booking_tc_admin_debug_page() {
 ?>
 	<div class="wrap">
 		<h1>Debug TravelClick</h1>
+		<?php btq_booking_tc_generate_unavailable_dates(); ?>
 		<!--
 		<form method="post" action="options.php">
 			<?php /* settings_fields( 'btq-booking-tc-settings' ); ?>
@@ -554,12 +588,12 @@ function btq_booking_tc_admin_debug_page() {
 			<?php submit_button(); */ ?>
 		</form>
 		-->
-		<!--
+		
 		<div style="background-color: white;">
-			<?php /* btq_booking_tc_admin_debug_rooms('95698'); ?>
-			<?php btq_booking_tc_admin_debug_rooms('131328'); */ ?>
+			<?php btq_booking_tc_admin_debug_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_es') )); ?>
+			<?php btq_booking_tc_admin_debug_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_en') )); ?>
 		</div>
-		-->
+		
 		<!--
 		<pre style="background-color: white;">
 		<?php
@@ -582,6 +616,7 @@ function btq_booking_tc_admin_debug_page() {
 		</pre>
 		-->
 		
+		<!--
 		<div style="background-color: white;">
 			<p>Un año</p>
 		<?php 
@@ -606,6 +641,7 @@ function btq_booking_tc_admin_debug_page() {
 			file_put_contents( $js_dir . 'btq-unavailable.json', json_encode($datesUnavailable) );
 		?>
 		</div>
+		-->
 	</div><!-- wrap -->
 <?php
 }
@@ -671,10 +707,14 @@ add_action('btq_booking_tc_generate_unavailable_dates_event', 'btq_booking_tc_ge
  *
  * @author Saúl Díaz
  * @param string $description Descripción devuelta por TravelClick
+ * @param string $language Código de idioma
  * @return string Descripción con etiquetas necesarias para el link "Ver más".
  */
-function btq_booking_tc_grid_split_description($description){
+function btq_booking_tc_grid_split_description($description, $language = 'es'){
 	if(!empty($description) && is_string($description)){
+		
+		$str_view_more = ($language == 'es')?'Ver más':'View more';
+		
 		$descriptionStripTags = strip_tags($description);
 		$wordsArray = explode(' ', $descriptionStripTags);
 		
@@ -689,14 +729,16 @@ function btq_booking_tc_grid_split_description($description){
 			}
 		}
 		
-		$textFirst = implode(' ', $wordsArrayFirst);
-		$textLast  = implode(' ', $wordsArrayLast);
+		$textFirst = trim(implode(' ', $wordsArrayFirst));
+		$textLast  = trim(implode(' ', $wordsArrayLast));
 		
 		?>
 		<div>
-			<?php echo $textFirst; ?> 
-			<a class="vermas">Ver más</a>
+			<?php echo $textFirst . ' '; ?> 
+			<?php if(!empty($textLast)){ ?>
+			<a class="vermas"><?php echo $str_view_more; ?></a>
 			<span class="texto_recorrido" style="display:none"><?php echo $textLast; ?></span>
+			<?php } ?>
 		</div>
 		<?php
 	}
@@ -745,22 +787,22 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
 	
 	switch($language){
 		case 'es':
-			$hotelCode  = '131328';
-			$currency   = 'MXN';
-			$theme      = '13670';
-			$languageId = '2';
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_es') ); /* 131328 */
+			$currency     = 'MXN';
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_es') ); /* 13670 */
+			$str_book_now = 'Reservar Ahora';
 		break;
 		case 'en':
-			$hotelCode  = '95698';
-			$currency   = 'USD';
-			$theme      = '13671';
-			$languageId = '1';
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_us') ); /* 95698 */
+			$currency     = 'USD';
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_us') ); /* 13671 */
+			$str_book_now = 'Book Now';
 		break;
 	}
 	
 	$response = btq_booking_tc_soap_query($hotelCode, $dateRangeStart, $dateRangeEnd, $typeQuery, $rooms, $adults, $childrens, $availRatesOnly);
 	
-	btq_booking_tc_log('resultado', $response);
+	//btq_booking_tc_log('resultado', $response);
 	
 	if ($response !== FALSE) {
 		// Debug Log
@@ -841,7 +883,7 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
 				
 				<article class="col-md-4">
 					<h3 class="titulo"><?php echo $elementRoomType['!RoomTypeName'] ?></h3>
-					<?php btq_booking_tc_grid_split_description($elementRoomType['RoomDescription']['Text']['!Text']); ?>
+					<?php btq_booking_tc_grid_split_description($elementRoomType['RoomDescription']['Text']['!Text'], $language); ?>
 					
 					<?php
 					foreach($elementRoomType['Amenities']['Amenity'] as $RoomAmenitie){
@@ -862,7 +904,7 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
 					}
 					?>
 								
-					<hr class="linealetras" style="border-color:#C9B891;" style="border:2px;" />
+					<hr class="linealetras" />
 					<img src="<?php echo plugins_url( $images_iconos_path . 'icon_like.png', __FILE__ ); ?>" alt="Like" width="25" height="25">
 					<img src="<?php echo plugins_url( $images_iconos_path . 'icon_heart_uns.png', __FILE__ ); ?>" alt="Heart" width="25" height="25">
 				</article>
@@ -885,7 +927,9 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
 						$amount_discount = number_format_i18n( (($language == 'es')?$rate_room[$l]['Total']['!AmountAfterTax']:$rate_room[$l]['Total']['!AmountBeforeTax']), 2 );
 						?>
 						<label class="radio-inline">
-							<input type="radio" name="optradio"><?php echo $rate_room[$l]['!RatePlanName']; ?><br><span style="text-decoration: line-through; color: #666;">$<?php echo $amount_total . ' ' . $currency; ?></span><br>$<?php echo $amount_discount . ' ' . $currency; ?>
+							<input type="radio" name="optradio"><?php echo $rate_room[$l]['!RatePlanName']; ?><br>
+							<span>$<?php echo $amount_total . ' ' . $currency; ?></span><br>
+							$<?php echo $amount_discount . ' ' . $currency; ?>
 						</label>
 						<hr class="linea"/>
 						<?php
@@ -907,11 +951,7 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
 					<h3 align="center">$<?php echo $precio . ' ' . $currency; ?>/noche</h3>
 					<hr class="linea"/>
 					
-					<?php if ($language == 'es'):?>	
-					<button type="button" class="btn btq-btn" onclick="window.open('https://reservations.travelclick.com/<?php echo $hotelCode ?>?themeid=<?php echo $theme ?>&amp;datein=<?php echo date_format(date_create($dateRangeStart), "m/d/Y");?>&amp;dateout=<?php echo date_format(date_create($dateRangeEnd), "m/d/Y");?>&amp;roomtypeid=<?php echo $roomTypeCode; ?>&amp;adults=<?php echo $adults; ?>&amp;children=<?php echo $childrens; ?>&amp;rooms=<?php echo $rooms ?>&amp;currency=<?php echo $currency?>#/accommodation/room','_blank');">Reservar Ahora</button>
-					<?php else:?>
-					<button type="button" class="btn btq-btn" onclick="window.open('https://reservations.travelclick.com/<?php echo $hotelCode ?>?themeid=<?php echo $theme ?>&amp;datein=<?php echo date_format(date_create($dateRangeStart), "m/d/Y");?>&amp;dateout=<?php echo date_format(date_create($dateRangeEnd), "m/d/Y");?>&amp;roomtypeid=<?php echo $roomTypeCode; ?>&amp;adults=<?php echo $adults; ?>&amp;children=<?php echo $childrens; ?>&amp;rooms=<?php echo $rooms ?>&amp;currency=<?php echo $currency?>#/accommodation/room','_blank');">Book Now</button>
-					<?php endif;?>
+					<button type="button" class="btn btq-btn" onclick="window.open('https://reservations.travelclick.com/<?php echo $hotelCode ?>?themeid=<?php echo $themeid ?>&amp;datein=<?php echo date_format(date_create($dateRangeStart), "m/d/Y");?>&amp;dateout=<?php echo date_format(date_create($dateRangeEnd), "m/d/Y");?>&amp;roomtypeid=<?php echo $roomTypeCode; ?>&amp;adults=<?php echo $adults; ?>&amp;children=<?php echo $childrens; ?>&amp;rooms=<?php echo $rooms ?>&amp;currency=<?php echo $currency?>#/accommodation/room','_blank');"><?php echo $str_book_now; ?></button>
 				</article>
 				
 			</section>
@@ -947,16 +987,16 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 	
 	switch($language){
 		case 'es':
-			$hotelCode  = '131328';
-			$currency   = 'MXN';
-			$theme      = '13670';
-			$languageId = '2';
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_es') ); /* 131328 */
+			$currency     = 'MXN';
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_es') );  /* 13670 */
+			$str_book_now = 'Reservar Ahora';
 		break;
 		case 'en':
-			$hotelCode  = '95698';
-			$currency   = 'USD';
-			$theme      = '13671';
-			$languageId = '1';
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_en') ); /* 95698 */
+			$currency     = 'USD';
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_us') ); /* 13671 */
+			$str_book_now = 'Book Now';
 		break;
 	}
 	
@@ -1079,7 +1119,7 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 				
 				<article class="col-md-4">
 					<h3 class="titulo"><?php echo $elementRatePlan['!RatePlanName'] ?></h3>
-					<?php btq_booking_tc_grid_split_description($elementRatePlan['RatePlanDescription']['Text']['!Text']); ?>
+					<?php btq_booking_tc_grid_split_description($elementRatePlan['RatePlanDescription']['Text']['!Text'], $language); ?>
 					
 					<?php
 					foreach($roomType['Amenities']['Amenity'] as $RoomAmenitie){
@@ -1099,7 +1139,7 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 						}
 					}
 					?>
-					<hr class="linealetras" style="border-color:#C9B891;" style="border:2px;" />
+					<hr class="linealetras" />
 					
 					<img src="<?php echo plugins_url( $images_iconos_path . 'icon_like.png', __FILE__ ); ?>" alt="Like" width="25" height="25">
 					<img src="<?php echo plugins_url( $images_iconos_path . 'icon_heart_uns.png', __FILE__ ); ?>" alt="Heart" width="25" height="25">
@@ -1110,7 +1150,8 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 						<hr class="linea"/>
 						<label class="radio-inline">
 						  <?php $amount = number_format_i18n( (($language == 'es')?$roomRate['Total']['!AmountAfterTax']:$roomRate['Total']['!AmountBeforeTax']), 2 ); ?>
-		                  <input type="radio" name="optradio"><?php echo $roomRate['!RoomTypeName']; ?><br>$<?php echo $amount . ' ' . $currency; ?>
+		                  <input type="radio" name="optradio"><?php echo $roomRate['!RoomTypeName']; ?><br>
+		                  $<?php echo $amount . ' ' . $currency; ?>
 		                </label>
 		                <hr class="linea"/>
 					</form>
@@ -1122,11 +1163,8 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 					
 					<h3 align="center">$<?php echo $precio . ' ' . $currency; ?>/noche</h3>
 					<hr class="linea"/>
-
 					
-								<button type="button" class="btn btq-btn" onclick="window.open('https://reservations.travelclick.com/<?php echo $hotelCode ?>?themeid=<?php echo $theme ?>&amp;datein=<?php echo date_format(date_create($dateRangeStart), "m/d/Y");?>&amp;dateout=<?php echo date_format(date_create($dateRangeEnd), "m/d/Y");?>&amp;roomtypeid=<?php echo $roomTypeCode; ?>&amp;packageid=<?php echo $RatePlanCode; ?>&amp;adults=<?php echo $adults; ?>&amp;children=<?php echo $children; ?>&amp;rooms=<?php echo $rooms ?>&amp;currency=<?php echo $currency?>#/accommodation/package','_blank');">Reservar Ahora</button>
-
-
+					<button type="button" class="btn btq-btn" onclick="window.open('https://reservations.travelclick.com/<?php echo $hotelCode ?>?themeid=<?php echo $themeid ?>&amp;datein=<?php echo date_format(date_create($dateRangeStart), "m/d/Y");?>&amp;dateout=<?php echo date_format(date_create($dateRangeEnd), "m/d/Y");?>&amp;roomtypeid=<?php echo $roomTypeCode; ?>&amp;packageid=<?php echo $RatePlanCode; ?>&amp;adults=<?php echo $adults; ?>&amp;children=<?php echo $children; ?>&amp;rooms=<?php echo $rooms ?>&amp;currency=<?php echo $currency?>#/accommodation/package','_blank');"><?php echo $str_book_now; ?></button>
 				</article>
 				
 			</section>
@@ -1159,7 +1197,6 @@ function btq_booking_tc_grid_form($language = 'es') {
 		$str_adult = 'Adults: ';
 		$str_children = 'Children: ';
 		$str_rooms = 'Rooms: ';
-		$str_check = 'Check your dates-rate to stay';
 		$str_90days = '* Remember that having an advance reservation will always be a better option (rates shown at 90 days)';
 	}
 	else {
@@ -1173,7 +1210,6 @@ function btq_booking_tc_grid_form($language = 'es') {
 		$str_adult = 'Adultos: ';
 		$str_children = 'Niños: ';
 		$str_rooms = 'Habitaciones: ';
-		$str_check = 'Consulta las tarifas para hospedarte';
 		$str_90days = '* Recuerda que tener una reservación anticipada siempre será una mejor opción (tarifas mostradas a 90 días)';
 	}
 	
@@ -1211,12 +1247,12 @@ function btq_booking_tc_grid_form($language = 'es') {
 					<div class="row">
 						<div class="col-xs-6">
 							<div class="form-group">
-								<input class="btq-input" id="btq-date-start" name="btq-date-start" placeholder="<?php echo $str_arrival_date; ?>">
+								<input autocomplete="off" class="btq-input" id="btq-date-start" name="btq-date-start" placeholder="<?php echo $str_arrival_date; ?>">
 							</div>
 						</div>
 						<div class="col-xs-6">
 							<div class="form-group">
-								<input class="btq-input" id="btq-date-end" name="btq-date-end" placeholder="<?php echo $str_departure_date; ?>">
+								<input autocomplete="off" class="btq-input" id="btq-date-end" name="btq-date-end" placeholder="<?php echo $str_departure_date; ?>">
 							</div>		
 						</div>
 					</div>
@@ -1267,12 +1303,7 @@ function btq_booking_tc_grid_form($language = 'es') {
 		<hr class="linea"/>
 		
 		<section class="row">
-			<article class="col-md-5">
-				<img src="<?php echo plugins_url( $iconos_dir . DIRECTORY_SEPARATOR . 'gh_calendar2.png', __FILE__ ); ?>" width="30" height="30" id="element2">
-				<h5 class="hosp2"><?php echo $str_check; ?></h5>
-			</article>
-
-			<article class="col-md-7">
+			<article class="col-md-12">
 				<p class="recordatorio"><?php echo $str_90days; ?></p>
 			</article>
 			<hr class="linea"/>
@@ -1289,12 +1320,70 @@ function btq_booking_tc_grid_form($language = 'es') {
  * @return void Integra CSS y JS al frond-end del sitio.
  */
 function btq_booking_tc_grid_scripts() {
-    wp_enqueue_style( 'btq-booking-tc-grid', plugins_url( 'assets/css' . DIRECTORY_SEPARATOR . 'estilos.css', __FILE__ ), 'solaz-child-style','1.0.0');
-    wp_enqueue_script( 'moment', plugins_url( 'assets/js' . DIRECTORY_SEPARATOR . 'moment.min.js', __FILE__ ), array(), '2.21.0', true);
-    wp_enqueue_script( 'moment-timezone', plugins_url( 'assets/js' . DIRECTORY_SEPARATOR . 'moment-timezone.js', __FILE__ ), array('moment'), ' 0.5.17', true);
-    wp_enqueue_script( 'btq-booking-tc-grid-js', plugins_url( 'assets/js' . DIRECTORY_SEPARATOR . 'app.js', __FILE__ ), array('moment','moment-timezone'), '1.0.0');
+    if (!is_admin()) {
+	    wp_enqueue_style( 'btq-booking-tc-grid', plugins_url( 'assets/css' . DIRECTORY_SEPARATOR . 'estilos.css', __FILE__ ), 'solaz-child-style','1.0.0');
+	    wp_enqueue_script( 'moment', plugins_url( 'assets/js' . DIRECTORY_SEPARATOR . 'moment.min.js', __FILE__ ), array(), '2.21.0', true);
+	    wp_enqueue_script( 'moment-timezone', plugins_url( 'assets/js' . DIRECTORY_SEPARATOR . 'moment-timezone.js', __FILE__ ), array('moment'), ' 0.5.17', true);
+	    wp_enqueue_script( 'btq-booking-tc-grid-js', plugins_url( 'assets/js' . DIRECTORY_SEPARATOR . 'app.js', __FILE__ ), array('moment','moment-timezone'), '1.0.0');
+	}
 }
 add_action( 'wp_enqueue_scripts', 'btq_booking_tc_grid_scripts', 1001 );
+
+function btq_booking_tc_head_scripts(){
+	/** 
+	 * CSS personalizado dentro de <head>
+	 * Estilos del BTQ Booking TC Grid
+	 *
+	 * Datepicker
+	 * 
+	 * #cb6666  Rosado rojo
+	 * #222     Negro
+	 * #cbd08c  Amarillo limon
+	 * #666     Gris
+	 * #C69807  Dorado - Gran Hotel
+	 * #fff     Balnco
+	 *
+	 *
+	 *
+	 * Grid
+	 *
+	 * #BDBDBD  Gris claro
+	 * #666     Gris
+	 * #C69807  Dorado - Gran Hotel
+	 */
+	if (!is_admin()) {
+	    ?>
+	    <style type="text/css">
+		    .ui-datepicker-unselectable span.ui-state-default{
+				background-color: #cb6666 !important;
+				color: #222 !important;
+			}
+			
+			.btq-unavailable-day a.ui-state-default{
+				background-color: #cbd08c !important;
+				color: #666 !important;
+			}
+			
+			.btq-unavailable-day a.ui-state-default:hover{
+				background-color: <?php echo esc_attr( get_option('btq_booking_tc_color_principal') ); ?> !important;
+				color: #fff !important;
+			}
+			
+			.grisfondo{
+				background-color:#BDBDBD;
+			}
+			
+			.radio-inline span{
+				color: #666;
+			}
+			.linealetras {
+				border-color:<?php echo esc_attr( get_option('btq_booking_tc_color_principal') ); ?> !important;
+			}
+	    </style>
+		<?php
+	}
+}
+add_action('wp_enqueue_scripts', 'btq_booking_tc_head_scripts', 1002);
 
 /**
  * Declara el Widget de BTQ Booking TC en VisualCompouser.
@@ -1414,6 +1503,7 @@ function btq_booking_tc_grid_packages_ajax() {
 	else {
 		echo '';
 	}
+	wp_die();
 }
 add_action( 'wp_ajax_btq_booking_tc_grid_packages', 'btq_booking_tc_grid_packages_ajax' );
 add_action( 'wp_ajax_nopriv_btq_booking_tc_grid_packages', 'btq_booking_tc_grid_packages_ajax' );
@@ -1435,6 +1525,7 @@ function btq_booking_tc_grid_rooms_ajax() {
 	else {
 		echo '';
 	}
+	wp_die();
 }
 add_action( 'wp_ajax_btq_booking_tc_grid_rooms', 'btq_booking_tc_grid_rooms_ajax' );
 add_action( 'wp_ajax_nopriv_btq_booking_tc_grid_rooms', 'btq_booking_tc_grid_rooms_ajax' );
@@ -1488,7 +1579,7 @@ function btq_booking_tc_grid_current_language_code() {
 	}
 	
 	//Debug
-	btq_booking_tc_log('languages', $language, TRUE);
+	//btq_booking_tc_log('languages', $language, TRUE);
 	
 	return $language;
 }

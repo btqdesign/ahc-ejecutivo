@@ -463,8 +463,8 @@ function btq_booking_tc_amenity_icon_name($amenityCode) {
  * @param string $hotelCode Código de hotel en TravelClick.
  * @return string Información retornada de la consulta.
  */
-function btq_booking_tc_admin_debug_rooms($hotelCode = '131328') {
-	$response = btq_booking_tc_soap_query($hotelCode, '2018-09-11', '2018-09-12');
+function btq_booking_tc_admin_debug_rooms($hotelCode) {
+	$response = btq_booking_tc_soap_query( $hotelCode, btq_booking_tc_grid_date_start(), btq_booking_tc_grid_date_end(btq_booking_tc_grid_date_start()) );
 	
 	$RoomAmenities = array();
 	$amenities = array();
@@ -482,9 +482,11 @@ function btq_booking_tc_admin_debug_rooms($hotelCode = '131328') {
 	?>
 	</table>
 	
+	<?php /*
 	<pre>
 		<?php $RoomAmenitiesDebug = var_export($RoomAmenities); echo htmlentities($RoomAmenitiesDebug); ?>
 	</pre>
+	*/ ?>
 	
 	<?php
 	

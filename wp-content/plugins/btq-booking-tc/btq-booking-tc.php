@@ -574,7 +574,7 @@ function btq_booking_tc_admin_debug_page() {
 ?>
 	<div class="wrap">
 		<h1>Debug TravelClick</h1>
-		<?php btq_booking_tc_generate_unavailable_dates(); ?>
+		<?php /*btq_booking_tc_generate_unavailable_dates();*/ ?>
 		<!--
 		<form method="post" action="options.php">
 			<?php /* settings_fields( 'btq-booking-tc-settings' ); ?>

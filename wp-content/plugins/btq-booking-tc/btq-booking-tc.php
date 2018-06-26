@@ -100,11 +100,27 @@ function btq_booking_tc_admin_menu() {
     );
     add_submenu_page(
     	'btq_booking_tc_settings', 
-    	__('Debug', 'btq-booking-tc'), 
-    	__('Debug', 'btq-booking-tc'), 
+    	__('Test Query Rooms', 'btq-booking-tc'), 
+    	__('Test Query Rooms', 'btq-booking-tc'), 
     	'manage_options', 
-    	'btq_booking_tc_debug',
-    	'btq_booking_tc_admin_debug_page'
+    	'btq_booking_tc_test_query_rooms',
+    	'btq_booking_tc_admin_test_query_rooms_page'
+    );
+    add_submenu_page(
+    	'btq_booking_tc_settings', 
+    	__('Test Query Packages', 'btq-booking-tc'), 
+    	__('Test Query Packages', 'btq-booking-tc'), 
+    	'manage_options', 
+    	'btq_booking_tc_test_query_packages',
+    	'btq_booking_tc_admin_test_query_packages_page'
+    );
+    add_submenu_page(
+    	'btq_booking_tc_settings', 
+    	__('Unavailable Dates', 'btq-booking-tc'), 
+    	__('Unavailable Dates', 'btq-booking-tc'), 
+    	'manage_options', 
+    	'btq_booking_tc_unavailable_dates',
+    	'btq_booking_tc_admin_generate_unavailable_dates_page'
     );
     /* Manda a llamar la funcion para declarar los ajustes y opciones del plug-in */
     add_action( 'admin_init', 'btq_booking_tc_register_settings' );
@@ -136,7 +152,7 @@ function btq_booking_tc_register_settings() {
 function btq_booking_tc_admin_settings_page() {
 ?>
 	<div class="wrap">
-		<h1>Booking TC</h1>
+		<h1>Booking Settings TC</h1>
 		<form method="post" action="options.php">
 			<?php settings_fields( 'btq-booking-tc-settings' ); ?>
 			<?php do_settings_sections( 'btq-booking-tc-settings' ); ?>
@@ -386,6 +402,34 @@ function btq_booking_tc_soap_query($hotelCode, $dateRangeStart, $dateRangeEnd, $
 }
 
 /**
+ * Realiza la consulta SOAP a TravelClick y devuelve el resultado
+ *
+ * @author Saúl Díaz
+ * @param string $hotelCode Código de hotel en TravelClick.
+ * @param string $dateRangeStart Fecha de llegada.
+ * @param string $dateRangeEnd Fecha de salida.
+ * @param string $typeQuery Tipo de consulta: habitaciones o paquetes.
+ * @param int $rooms Cantidad de habitaciones.
+ * @param int $adults Cantidad de adultos.
+ * @param int $childrens Cantidad de niños.
+ * @param string $availRatesOnly Valor booleano 'true' o 'false' para
+ *		la consulta de habitaciones disponibles.
+ * @return array Resultado de la consulta SOAP.
+ */
+function btq_booking_tc_soap_query_status($hotelCode, $dateRangeStart, $dateRangeEnd, $typeQuery = 'rooms', $rooms = 1, $adults = 1, $childrens = 0, $availRatesOnly = 'true'){
+	require_once('lib/nusoap.php');
+	
+	$soap = btq_booking_tc_soap_query_string($hotelCode, $dateRangeStart, $dateRangeEnd, $typeQuery, $rooms, $adults, $childrens, $availRatesOnly);
+	
+	$client = new nusoap_client($soap['wsaTo']);
+	$client->soap_defencoding = 'UTF-8';
+	$client->decode_utf8 = FALSE;
+	$result = $client->send($soap['envelope'], $soap['wsaTo'], '');
+	
+	return $result;
+}
+
+/**
  * Consulta en el catálogo de amenidades y devuelve el nombre de la imagen.
  *
  * @author Saúl Díaz
@@ -400,125 +444,10 @@ function btq_booking_tc_amenity_icon_name($amenityCode) {
 	// Debug Log
 	//btq_booking_tc_log('amenities', $amenitiesArray);
 	
-	/*
-	$amenitiesArray = array(
-		'10'       => 'english_air_conditioned.png',
-		'12'       => 'english_alarm_clock.png',
-		//'codigo' => 'english_amenidades.png',
-		//'codigo' => 'english_banera.png',
-		//'codigo' => 'english_cafe_de_cortesia.png',
-		//'codigo' => 'english_cambio_de_divisas.png',
-		'51'       => 'english_coffeemaker.png',
-		//'codigo' => 'english_cortesia_nocturna.png',
-		'128312'   => 'english_courtesy_sweet_in-the-room.png',
-		'59'       => 'english_crib.png',
-		//'codigo' => 'english_desayuno_americano_1.png',
-		'69'       => 'english_double_bed.png',
-		//'codigo' => 'english_escritorio.png',
-		'89'       => 'english_fire_alarm_with_light.png',
-		'151'      => 'english_free_newspaper.png',
-		'59240'    => 'english_free_wifi.png',
-		'119'      => 'english_king_bed.png',
-		'128'      => 'english_large_suite.png',
-		//'codigo' => 'english_llamadas_locales_en_cortesia.png',
-		//'codigo' => 'english_menu_almuadas.png',
-		//'codigo' => 'english_recamaras_tematicas.png',
-		//'codigo' => 'english_regadera_de_mano.png',
-		'139963'   => 'english_room_zocalo_view.png',
-		'128315'   => 'english_safe_deposit_box.png',
-		'128317'   => 'english_selection_of_cushions.png',
-		'210'      => 'english_sitting_area.png',
-		'217'      => 'english_sofa_bed.png',
-		//'codigo' => 'english_telefono_en_el_bañol.png',
-		//'codigo' => 'english_television_con_cable.png',
-		'128311'   => 'english_welcome_drink.png',
-		'54080'    => 'spanish_aire_acondicionado.png',
-		'54200'    => 'spanish_amenidades.png',
-		'54181'    => 'spanish_banera.png',
-		'128319'   => 'spanish_bebida_de_bienvenida.png',
-		'54234'    => 'spanish_cafe_de_cortesia.png',
-		'54191'    => 'spanish_cafetera.png',
-		'54216'    => 'spanish_caja_de_seguridad.png',
-		'59204'    => 'spanish_cama_king_size.png',
-		'54214'    => 'spanish_cambio_de_divisas.png',
-		'59201'    => 'spanish_cortesia_nocturna.png',
-		'54192'    => 'spanish_cunas.png',
-		'128320'   => 'spanish_desayuno_americano_1.png',
-		'59205'    => 'spanish_dos_camas.png',
-		'54211'    => 'spanish_escritorio.png',
-		'54210'    => 'spanish_estancia.png',
-		'139964'   => 'spanish_habitacion_con_vista_zocalo.png',
-		'54225'    => 'spanish_habitacion_nupcial.png',
-		'59207'    => 'spanish_llamadas_locales_en_cortesia.png',
-		'128321'   => 'spanish_menu_almuadas.png',
-		'54223'    => 'spanish_recamaras_tematicas.png',
-		'54207'    => 'spanish_regadera_de_mano.png',
-		'59203'    => 'spanish_telefono_en_el_banol.png',
-		'54190'    => 'spanish_television_con_cable.png',
-		'59242'    => 'spanish_wifi_en_cortesia.png'
-	);
-	*/
-	
 	if (!isset($amenitiesArray[$amenityCode]))
 		return FALSE;
 	
 	return $amenitiesArray[$amenityCode];
-}
-
-/**
- * Para depurar la consulta de las habitaciones.
- *
- * @author Saúl Díaz
- * @param string $hotelCode Código de hotel en TravelClick.
- * @return string Información retornada de la consulta.
- */
-function btq_booking_tc_admin_debug_rooms($hotelCode) {
-	$response = btq_booking_tc_soap_query( $hotelCode, btq_booking_tc_grid_date_start(), btq_booking_tc_grid_date_end(btq_booking_tc_grid_date_start()) );
-	
-	$RoomAmenities = array();
-	$amenities = array();
-	
-	$RoomType = $response['RoomStays']['RoomStay']['RoomTypes']['RoomType'];
-	
-	?>
-	<table>
-		<tr><th>Código de habitación</th><th>Nombre de la habitación</th></tr>
-	<?php
-	foreach($RoomType as $elementRoomType){
-		$RoomAmenities[] = $elementRoomType['Amenities']['Amenity'];
-		?><tr><td><?php echo $elementRoomType['!RoomTypeCode']; ?></td><td><?php echo htmlentities($elementRoomType['!RoomTypeName']); ?></td></tr><?php
-	}
-	?>
-	</table>
-	
-	<?php /*
-	<pre>
-		<?php $RoomAmenitiesDebug = var_export($RoomAmenities); echo htmlentities($RoomAmenitiesDebug); ?>
-	</pre>
-	*/ ?>
-	
-	<?php
-	
-	for ($i = 0; $i < count($RoomAmenities); $i++){
-		foreach($RoomAmenities[$i] as $RoomAmenitie){
-			if (!isset($amenities[$RoomAmenitie['!ExistsCode']])){
-				$amenities[$RoomAmenitie['!ExistsCode']] = $RoomAmenitie['!RoomAmenity'];
-			}
-		}
-	}
-	
-	//$amenitiesUnique = array_unique($amenities);
-	
-	?>
-	<table>
-		<tr><th>Código de amenidad</th><th>Nombre de la amenidad</th></tr>
-	<?php
-	foreach($amenities as $amenitieCode => $amenitieName){
-		?><tr><td><?php echo $amenitieCode; ?></td><td><?php echo htmlentities($amenitieName); ?></td></tr><?php
-	}
-	?>
-	</table>
-	<?php
 }
 
 /**
@@ -528,8 +457,67 @@ function btq_booking_tc_admin_debug_rooms($hotelCode) {
  * @param string $hotelCode Código de hotel en TravelClick
  * @return string Información retornada de la consulta.
  */
-function btq_booking_tc_admin_debug_packages($hotelCode = '131328') {
-	$response = btq_booking_tc_soap_query($hotelCode, '2018-09-11', '2018-09-12', 'packages');
+function btq_booking_tc_admin_test_query_packages($hotelCode) {
+	$response = btq_booking_tc_soap_query($hotelCode, btq_booking_tc_grid_date_start(), btq_booking_tc_grid_date_end(btq_booking_tc_grid_date_start()), 'packages');
+	
+	$ResponseRatePlan = $response['RoomStays']['RoomStay']['RatePlans']['RatePlan'];
+		
+	$arrayRatePlan = array();
+	foreach($ResponseRatePlan as $RatePlanElement){
+		if ($RatePlanElement['!RatePlanType'] == 'Package'){
+			$arrayRatePlan[] = $RatePlanElement;
+		}
+	}
+	?>
+	<table cellpadding="3" cellspacing="2" border="1" style="margin-top: 10px; border-color: #333;">
+		<tr align="center" style="background-color: #333; color: white;"><th><?php _e('Rate Plan Code','btq-booking-tc'); ?></th><th><?php _e('Rate Plan Name','btq-booking-tc'); ?></th></tr>
+	<?php
+	foreach($arrayRatePlan as $elementRatePlan){			
+		$RatePlanCode = $elementRatePlan['!RatePlanCode'];
+		//$roomRate = $arrayRoomRate[$RatePlanCode];
+		//$roomTypeCode = $roomRate['!RoomTypeCode'];
+		//$roomType = $arrayRoomType[$roomTypeCode];
+		?>
+		<tr><td style="background-color: #EEE;"><?php echo $RatePlanCode; ?></td><td style="background-color: #EEE;"><?php echo htmlentities($elementRatePlan['!RatePlanName']); ?></td></tr>
+		<?php
+	}
+	?>
+	</table>
+	<?php
+}
+
+/**
+ * Genera la página para probar la carga de información de los paquetes.
+ *
+ * @author Saúl Díaz
+ * @return void Genera la pagina de depuración.
+ */
+function btq_booking_tc_admin_test_query_packages_page(){
+?>
+	<div class="wrap">
+		<h1><?php _e('Test query packages on TravelClick', 'btq-booking-tc'); ?></h1>
+		
+		<div style="background-color: white; padding: 10px;">
+			<h2><?php _e('Spanish','btq-booking-tc')?></h2>
+			<?php btq_booking_tc_admin_test_query_packages(esc_attr( get_option('btq_booking_tc_hotel_code_es') )); ?>
+		</div>
+		<div style="background-color: white; padding: 10px; margin-top: 10px;">
+			<h2><?php _e('English','btq-booking-tc')?></h2>
+			<?php btq_booking_tc_admin_test_query_packages(esc_attr( get_option('btq_booking_tc_hotel_code_us') )); ?>
+		</div>
+	</div><!-- wrap -->
+<?php
+}
+
+/**
+ * Para depurar la consulta de las habitaciones.
+ *
+ * @author Saúl Díaz
+ * @param string $hotelCode Código de hotel en TravelClick.
+ * @return string Información retornada de la consulta.
+ */
+function btq_booking_tc_admin_test_query_rooms($hotelCode) {
+	$response = btq_booking_tc_soap_query( $hotelCode, btq_booking_tc_grid_date_start(), btq_booking_tc_grid_date_end(btq_booking_tc_grid_date_start()) );
 	
 	$RoomAmenities = array();
 	$amenities = array();
@@ -537,19 +525,22 @@ function btq_booking_tc_admin_debug_packages($hotelCode = '131328') {
 	$RoomType = $response['RoomStays']['RoomStay']['RoomTypes']['RoomType'];
 	
 	?>
-	<table>
-		<tr><th>Código de habitación</th><th>Nombre de la habitación</th></tr>
+	<table cellpadding="3" cellspacing="2" border="1" style="margin-top: 10px; border-color: #333;">
+		<tr align="center" style="background-color: #333; color: white;"><th><?php _e('Room Type Code', 'btq-booking-tc'); ?></th><th><?php _e('Room Type Name', 'btq-booking-tc'); ?></th><th><?php _e('Folder With Pictures');?></th></tr>
 	<?php
 	foreach($RoomType as $elementRoomType){
 		$RoomAmenities[] = $elementRoomType['Amenities']['Amenity'];
-		?><tr><td><?php echo $elementRoomType['!RoomTypeCode']; ?></td><td><?php echo htmlentities($elementRoomType['!RoomTypeName']); ?></td></tr><?php
+		
+		$images_rooms_path   = 'assets/images/rooms/';
+		$images_dir = plugin_dir_path( __FILE__ ) . $images_rooms_path . $elementRoomType['!RoomTypeCode'];
+		$folder_with_pictures = (is_dir($images_dir)) ? __('Yes','btq-booking-tc') : __('No','btq-booking-tc');
+		
+		?>
+		<tr><td style="background-color: #EEE;"><?php echo $elementRoomType['!RoomTypeCode']; ?></td><td style="background-color: #EEE;"><?php echo htmlentities($elementRoomType['!RoomTypeName']); ?></td><td align="center" style="background-color: #EEE;"><?php echo $folder_with_pictures; ?></td></tr>
+		<?php
 	}
 	?>
 	</table>
-	
-	<pre>
-		<?php $RoomAmenitiesDebug = var_export($RoomAmenities); echo htmlentities($RoomAmenitiesDebug); ?>
-	</pre>
 	
 	<?php
 	
@@ -564,11 +555,23 @@ function btq_booking_tc_admin_debug_packages($hotelCode = '131328') {
 	//$amenitiesUnique = array_unique($amenities);
 	
 	?>
-	<table>
-		<tr><th>Código de amenidad</th><th>Nombre de la amenidad</th></tr>
+	<table cellpadding="3" cellspacing="2" border="1" style="margin-top: 10px; border-color: #333;">
+		<tr style="background-color: #333; color: white;" align="center"><th><?php _e('Amenity Code', 'btq-booking-tc'); ?></th><th><?php _e('Amenity Name', 'btq-booking-tc'); ?></th><th><?php _e('Amenity Icon', 'btq-booking-tc'); ?></th></tr>
 	<?php
+	$images_amenity_path = 'assets/images/amenity/';
+	
 	foreach($amenities as $amenitieCode => $amenitieName){
-		?><tr><td><?php echo $amenitieCode; ?></td><td><?php echo htmlentities($amenitieName); ?></td></tr><?php
+		$amenitieFileName = btq_booking_tc_amenity_icon_name($amenitieCode);
+		if (!empty($amenitieFileName)) {
+			$image_icono_url = plugins_url( $images_amenity_path . $amenitieFileName, __FILE__ );
+			$amenityIcon = '<img src="' . $image_icono_url . '" alt="' . htmlentities($amenitieName) . '" title="' . htmlentities($amenitieName) . '">';
+		}
+		else {
+			$amenityIcon = 'No';
+		}
+		?>
+		<tr><td style="background-color: #EEE;"><?php echo $amenitieCode; ?></td><td style="background-color: #EEE;"><?php echo htmlentities($amenitieName); ?></td><td align="center" style="background-color: #EEE;"><?php echo $amenityIcon; ?></td></tr>
+		<?php
 	}
 	?>
 	</table>
@@ -576,83 +579,42 @@ function btq_booking_tc_admin_debug_packages($hotelCode = '131328') {
 }
 
 /**
- * Genera la página para depurar el desarrollo del plugin.
+ * Genera la página para probar la carga de información del booking.
  *
  * @author Saúl Díaz
  * @return void Genera la pagina de depuración.
  */
-function btq_booking_tc_admin_debug_page() {
+function btq_booking_tc_admin_test_query_rooms_page() {
 ?>
 	<div class="wrap">
-		<h1>Debug TravelClick</h1>
-		<?php /*btq_booking_tc_generate_unavailable_dates();*/ ?>
-		<!--
-		<form method="post" action="options.php">
-			<?php /* settings_fields( 'btq-booking-tc-settings' ); ?>
-			<?php do_settings_sections( 'btq-booking-tc-settings' ); ?>
-			<table class="form-table">
-				<tr valign="top">
-					<th scope="row"><?php _e('Hotel code english language', 'btq-booking-tc'); ?></th>
-					<td><textarea name="hotel_soap" type="textarea" cols="" rows=""><?php echo esc_attr( get_option('hotel_soap') ); ?></textarea></td>
-				</tr>
-			</table>
-			<?php submit_button(); */ ?>
-		</form>
-		-->
+		<h1><?php _e('Test query rooms on TravelClick', 'btq-booking-tc'); ?></h1>
 		
-		<div style="background-color: white;">
-			<?php btq_booking_tc_admin_debug_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_es') )); ?>
-			<?php btq_booking_tc_admin_debug_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_us') )); ?>
+		<div style="background-color: white; padding: 10px;">
+			<h2><?php _e('Spanish','btq-booking-tc')?></h2>
+			<?php btq_booking_tc_admin_test_query_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_es') )); ?>
 		</div>
-		
-		<!--
-		<pre style="background-color: white;">
-		<?php
-			/*
-			$images_dir = 'assets/images/340132';
-			
-			$images_path = plugin_dir_path( __FILE__ ) . $images_dir;
-			//$image_url = plugins_url( $images_dir . DIRECTORY_SEPARATOR . 'wordpress.png', __FILE__ );
-			echo $images_path . "\n";
-			
-			$images = btq_booking_tc_grid_get_images($images_path);
-			echo var_export($images, TRUE) . "\n\n";
-			
-			foreach($images as $image_name){
-				$image_url = plugins_url( $images_dir . DIRECTORY_SEPARATOR . $image_name, __FILE__ );
-				echo $image_url . "\n";
-			}
-			*/
-		?>
-		</pre>
-		-->
-		
-		<!--
-		<div style="background-color: white;">
-			<p>Un año</p>
-		<?php 
-			$dateRangeStart = date('Y-m-d');
-			$dateRangeEnd   = date('Y-m-d', strtotime($dateRangeStart . ' + 1 year'));
-			$dates = btq_booking_tc_grid_dates($dateRangeStart, $dateRangeEnd);
-			$datesUnavailable = array();
-			$num_count = 1;
-			foreach($dates as $date){
-				$currentTime = date('[Y-m-d H:i:s]');
-				$dayRangeStart = $date->format('Y-m-d');
-				$dayRangeEnd   = date('Y-m-d', strtotime($date->format('Y-m-d') . ' + 1 day'));
-				$disponibilidad = 'OK';
-				if (btq_booking_tc_soap_query('131328', $dayRangeStart, $dayRangeEnd) === FALSE){
-					$disponibilidad = 'NO';
-					$datesUnavailable[] = $dayRangeStart;
-				}
-				echo $num_count . '.- ' . $currentTime . ' ' . $dayRangeStart . ' - ' . $dayRangeEnd . ' - ' . $disponibilidad . '<br>';
-				$num_count++;
-			}
-			$js_dir = plugin_dir_path( __FILE__ ) . 'assets' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR ;
-			file_put_contents( $js_dir . 'btq-unavailable.json', json_encode($datesUnavailable) );
-		?>
+		<div style="background-color: white; padding: 10px; margin-top: 10px;">
+			<h2><?php _e('English','btq-booking-tc')?></h2>
+			<?php btq_booking_tc_admin_test_query_rooms(esc_attr( get_option('btq_booking_tc_hotel_code_us') )); ?>
 		</div>
-		-->
+	</div><!-- wrap -->
+<?php
+}
+
+/**
+ * Genera el JSON de los días no disponibles.
+ *
+ * @author Saúl Díaz
+ * @return void Genera la pagina de depuración.
+ */
+function btq_booking_tc_admin_generate_unavailable_dates_page() {
+?>
+	<div class="wrap">
+		<h1><?php _e('Generate Unavailable Dates TravelClick','btq-booking-tc'); ?></h1>
+		
+		<div style="background-color: white; padding: 10px;">
+			<?php btq_booking_tc_generate_unavailable_dates_status(); ?>
+		</div>
 	</div><!-- wrap -->
 <?php
 }
@@ -689,6 +651,49 @@ function btq_booking_tc_generate_unavailable_dates_activation() {
 register_activation_hook(__FILE__, 'btq_booking_tc_generate_unavailable_dates_activation');
 
 /**
+ * Genera el archivo JSON con el arreglo de fechas en donde no hay disponibilidad y devuelve elestado
+ *
+ * @author Saúl Díaz
+ * @return mixed Archivo JSON y tabala
+ */
+function btq_booking_tc_generate_unavailable_dates_status(){
+	$dateRangeStart = date('Y-m-d');
+	$dateRangeEnd   = date('Y-m-d', strtotime($dateRangeStart . ' + 1 year'));
+	$dates = btq_booking_tc_grid_dates($dateRangeStart, $dateRangeEnd);
+	$datesUnavailable = array();
+	
+	?>
+	<table cellpadding="3" cellspacing="2" border="1" style="margin-top: 10px; border-color: #333;">
+		<tr style="background-color: #333; color: white;" align="center"><th><?php _e('Date', 'btq-booking-tc'); ?></th><th><?php _e('Available', 'btq-booking-tc'); ?></th><th><?php _e('Description', 'btq-booking-tc'); ?></th></tr>
+	<?php
+	
+	foreach($dates as $date){
+		$dayRangeStart = $date->format('Y-m-d');
+		$dayRangeEnd   = date('Y-m-d', strtotime($date->format('Y-m-d') . ' + 1 day'));
+		$result = btq_booking_tc_soap_query_status(esc_attr(get_option('btq_booking_tc_hotel_code_es')), $dayRangeStart, $dayRangeEnd);
+		if (isset($result['Errors'])){
+			$errors = $result['Errors'];
+			$description = 'Error Code: '. $errors['Error']['!Code'] .' - '. $errors['Error']['!ShortText'];
+			$is_available = __('No','btq-booking-tc');
+			$datesUnavailable[] = $dayRangeStart;
+		}
+		else {
+			$is_available = __('Yes','btq-booking-tc');
+			$description = '';
+		}
+		?>
+		<tr><td style="background-color: #EEE;"><?php echo $dayRangeStart; ?></td><td style="background-color: #EEE;"><?php echo $is_available; ?></td><td style="background-color: #EEE;"><?php echo htmlentities($description); ?></td></tr>
+		<?php
+	}
+	?>
+	</table>
+	<?php
+	
+	$js_dir = plugin_dir_path( __FILE__ ) . 'assets' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR ;
+	file_put_contents( $js_dir . 'btq-unavailable.json', json_encode($datesUnavailable) );
+}
+
+/**
  * Genera el archivo JSON con el arreglo de fechas en donde no hay disponibilidad.
  *
  * @author Saúl Díaz
@@ -703,7 +708,7 @@ function btq_booking_tc_generate_unavailable_dates(){
 	foreach($dates as $date){
 		$dayRangeStart = $date->format('Y-m-d');
 		$dayRangeEnd   = date('Y-m-d', strtotime($date->format('Y-m-d') . ' + 1 day'));
-		if (btq_booking_tc_soap_query('131328', $dayRangeStart, $dayRangeEnd) === FALSE){
+		if (btq_booking_tc_soap_query(esc_attr(get_option('btq_booking_tc_hotel_code_es')), $dayRangeStart, $dayRangeEnd) === FALSE){
 			$datesUnavailable[] = $dayRangeStart;
 		}
 	}
@@ -794,19 +799,19 @@ function btq_booking_tc_grid_get_images($path) {
  *		la consulta de habitaciones disponibles.
  * @return string HTML del Grid de habitaciones.
  */
-function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-21', $dateRangeEnd = '2018-09-22', $typeQuery = 'rooms', $rooms = 1, $adults = 1, $childrens = 0, $availRatesOnly = 'true'){
+function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart, $dateRangeEnd, $typeQuery = 'rooms', $rooms = 1, $adults = 1, $childrens = 0, $availRatesOnly = 'true'){
 	
 	switch($language){
 		case 'es':
-			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_es') ); /* 131328 */
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_es') );
 			$currency     = 'MXN';
-			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_es') ); /* 13670 */
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_es') );
 			$str_book_now = 'Reservar Ahora';
 		break;
 		case 'en':
-			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_us') ); /* 95698 */
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_us') );
 			$currency     = 'USD';
-			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_us') ); /* 13671 */
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_us') );
 			$str_book_now = 'Book Now';
 		break;
 	}
@@ -910,7 +915,7 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
 							}
 							else {
 								//error_log( 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'] );
-								btq_booking_tc_log('amenitiesExistsCodeRooms', 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'], true);
+								//btq_booking_tc_log('amenitiesExistsCodeRooms', 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'], true);
 							} 
 						}
 					}
@@ -995,19 +1000,19 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
  *		la consulta de habitaciones disponibles.
  * @return string HTML del Grid de pauetes.
  */
-function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-09-21', $dateRangeEnd = '2018-09-22', $typeQuery = 'packages', $rooms = 1, $adults = 2, $childrens = 0, $availRatesOnly = 'true'){
+function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart, $dateRangeEnd, $typeQuery = 'packages', $rooms = 1, $adults = 2, $childrens = 0, $availRatesOnly = 'true'){
 	
 	switch($language){
 		case 'es':
-			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_es') ); /* 131328 */
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_es') );
 			$currency     = 'MXN';
-			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_es') );  /* 13670 */
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_es') );
 			$str_book_now = 'Reservar Ahora';
 		break;
 		case 'en':
-			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_us') ); /* 95698 */
+			$hotelCode    = esc_attr( get_option('btq_booking_tc_hotel_code_us') );
 			$currency     = 'USD';
-			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_us') ); /* 13671 */
+			$themeid      = esc_attr( get_option('btq_booking_tc_hotel_themeid_us') );
 			$str_book_now = 'Book Now';
 		break;
 	}
@@ -1147,7 +1152,7 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 							}
 							else {
 								//error_log( 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'] );
-								btq_booking_tc_log('amenitiesExistsCodePackages', 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'], true);
+								//btq_booking_tc_log('amenitiesExistsCodePackages', 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'], true);
 							} 
 						}
 					}

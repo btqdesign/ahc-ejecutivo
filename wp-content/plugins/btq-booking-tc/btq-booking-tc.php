@@ -393,6 +393,14 @@ function btq_booking_tc_soap_query($hotelCode, $dateRangeStart, $dateRangeEnd, $
  * @return string Nombre del archivo de la amenidad. 
  */
 function btq_booking_tc_amenity_icon_name($amenityCode) {
+	$amenitiesJSON_file = plugin_dir_path( __FILE__ ) . 'assets' . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'btq-amenities.json';
+	$amenitiesJSON = file_get_contents($amenitiesJSON_file);
+	$amenitiesArray = json_decode($amenitiesJSON, true);
+	
+	// Debug Log
+	//btq_booking_tc_log('amenities', $amenitiesArray);
+	
+	/*
 	$amenitiesArray = array(
 		'10'       => 'english_air_conditioned.png',
 		'12'       => 'english_alarm_clock.png',
@@ -449,6 +457,7 @@ function btq_booking_tc_amenity_icon_name($amenityCode) {
 		'54190'    => 'spanish_television_con_cable.png',
 		'59242'    => 'spanish_wifi_en_cortesia.png'
 	);
+	*/
 	
 	if (!isset($amenitiesArray[$amenityCode]))
 		return FALSE;
@@ -900,7 +909,8 @@ function btq_booking_tc_grid_rooms($language = 'es', $dateRangeStart = '2018-09-
 								<?php
 							}
 							else {
-								error_log( 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'] );
+								//error_log( 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'] );
+								btq_booking_tc_log('amenitiesExistsCodeRooms', 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'], true);
 							} 
 						}
 					}
@@ -1136,7 +1146,8 @@ function btq_booking_tc_grid_packages($language = 'es', $dateRangeStart = '2018-
 								<?php
 							}
 							else {
-								error_log( 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'] );
+								//error_log( 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'] );
+								btq_booking_tc_log('amenitiesExistsCodePackages', 'ExistsCode: ' . $RoomAmenitie['!ExistsCode'] . ' - RoomAmenity: ' . $RoomAmenitie['!RoomAmenity'], true);
 							} 
 						}
 					}

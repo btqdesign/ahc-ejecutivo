@@ -1,47 +1,23 @@
-@font-face {
-  font-family: 'ButlerStencil-Bold';
-  src: url('ButlerStencil-Bold.eot');
-  src: url('ButlerStencil-Bold.woff2') format('woff2'),
-       url('ButlerStencil-Bold.woff') format('woff'),
-       url('ButlerStencil-Bold.ttf') format('truetype'),
-       url('ButlerStencil-Bold.svg#ButlerStencil-Bold') format('svg'),
-       url('ButlerStencil-Bold.eot?#iefix') format('embedded-opentype');
-  font-weight: normal;
-  font-style: normal;
+@import url("http://fast.fonts.net/t/1.css?apiType=css&projectid=cfb82a41-5c7e-4e76-8414-91039e913098");
+@font-face{
+    font-family:"Avenir LT W01_35 Light1475496";
+    src:url("Fonts/edefe737-dc78-4aa3-ad03-3c6f908330ed.eot?#iefix");
+    src:url("Fonts/edefe737-dc78-4aa3-ad03-3c6f908330ed.eot?#iefix") format("eot"),url("Fonts/0078f486-8e52-42c0-ad81-3c8d3d43f48e.woff2") format("woff2"),url("Fonts/908c4810-64db-4b46-bb8e-823eb41f68c0.woff") format("woff"),url("Fonts/4577388c-510f-4366-addb-8b663bcc762a.ttf") format("truetype"),url("Fonts/b0268c31-e450-4159-bfea-e0d20e2b5c0c.svg#b0268c31-e450-4159-bfea-e0d20e2b5c0c") format("svg");
 }
-
-@font-face {
-  font-family: 'ButlerStencil-Medium';
-  src: url('ButlerStencil-Medium.eot');
-  src: url('ButlerStencil-Medium.woff2') format('woff2'),
-       url('ButlerStencil-Medium.woff') format('woff'),
-       url('ButlerStencil-Medium.ttf') format('truetype'),
-       url('ButlerStencil-Medium.svg#ButlerStencil-Medium') format('svg'),
-       url('ButlerStencil-Medium.eot?#iefix') format('embedded-opentype');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'Butler-Light';
-  src: url('Butler-Light.eot');
-  src: url('Butler-Light.woff2') format('woff2'),
-       url('Butler-Light.woff') format('woff'),
-       url('Butler-Light.ttf') format('truetype'),
-       url('Butler-Light.svg#Butler-Light') format('svg'),
-       url('Butler-Light.eot?#iefix') format('embedded-opentype');
-  font-weight: normal;
-  font-style: normal;
+@font-face{
+    font-family:"Avenir LT W01_85 Heavy1475544";
+    src:url("Fonts/6af9989e-235b-4c75-8c08-a83bdaef3f66.eot?#iefix");
+    src:url("Fonts/6af9989e-235b-4c75-8c08-a83bdaef3f66.eot?#iefix") format("eot"),url("Fonts/d513e15e-8f35-4129-ad05-481815e52625.woff2") format("woff2"),url("Fonts/61bd362e-7162-46bd-b67e-28f366c4afbe.woff") format("woff"),url("Fonts/ccd17c6b-e7ed-4b73-b0d2-76712a4ef46b.ttf") format("truetype"),url("Fonts/20577853-40a7-4ada-a3fb-dd6e9392f401.svg#20577853-40a7-4ada-a3fb-dd6e9392f401") format("svg");
 }
 
 h1 {
-	font-family: 'ButlerStencil-Medium' !important;
+	font-family: 'Avenir LT W01_85 Heavy1475544' !important;
 	font-weight: normal !important;
 	font-style: normal !important;
 }
 
 h2,h3,h4,h5,h6 {
-	font-family: 'Butler-Light' !important;
+	font-family: 'Avenir LT W01_35 Light1475496' !important;
 	font-weight: normal !important;
 	font-style: normal !important;
 }

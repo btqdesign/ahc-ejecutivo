@@ -1,4 +1,9 @@
 {
+	"54365"    : "spanish_servicio_de_limpieza.png",
+	"54377"    : "spanish_servicio_a_cuartos.png",
+	"54320"    : "english_fire_alarm_with_light.png",
+	"104691"   : "english_city_view.png",
+	"106"      : "english_hairdryer_in_room.png",
 	"59260"    : "english_free_wifi.png",
 	"10"       : "english_air_conditioned.png",
 	"128328"   : "english_safe_deposit_box.png",
@@ -18,6 +23,6 @@
 	"57543"    : "spanish_dos_camas.png",
 	"54384"    : "spanish_cunas.png",
 	"54323"    : "spanish_caja_de_seguridad.png",
-	"128325"   : "spanish_desayuno_americano_1.png",
+	"128325"   : "spanish_desayuno_buffet_incluido.png",
 	"57540"    : "spanish_desayuno_americano_1.png"
 }

@@ -222,9 +222,9 @@ $solaz_settings = solaz_check_theme_options();
 			        		<?php $solaz_settings['header_book_link'] = (isset($solaz_settings['header_book_link']) && $solaz_settings['header_book_link']!='')? $solaz_settings['header_book_link']:'hola';?>
 			        		<div class="link-contact f_right main-bg display-inline-b">
 			        			<?php if ($language == 'es'):?>	
-								<a class="" target="_blank" href="https://reservations.travelclick.com/131328?themeid=13670#/guestsandrooms">Reservar Ahora</a>
+								<a class="" target="_blank" href="https://reservations.travelclick.com/131327?HotelID=131327&DateOut=&DateIn=&Adults=1&Children=0&DateIn_submit=&LanguageID=2&Rooms=1&_ga=2.213320150.356691904.1531502525-475232808.1531502525&DateOut_submit=#/datesofstay">Reservar Ahora</a>
 								<?php else:?>
-								<a class="" target="_blank" href="https://reservations.travelclick.com/95698?themeid=13671#/guestsandrooms">Book Now</a>
+								<a class="" target="_blank" href="https://reservations.travelclick.com/95842?HotelID=95842&DateOut=&DateIn=&Adults=1&Children=0&LanguageID=1&Rooms=1&_ga=2.87067738.356691904.1531502525-475232808.1531502525#/datesofstay">Book Now</a>
 								</a>	
 															
 								<?php endif;?>

@@ -24,7 +24,7 @@ Text Domain:  solaz-child
 		display: block !important;
 	}
 	.btq-book-now ul li {
-		background-color: #BDBDBD;
+		background-color:#4a4f54;
 	    border: none;
 	    color: white;
 	    padding: 15px 70px;
@@ -34,7 +34,7 @@ Text Domain:  solaz-child
 	    font-size: 16px;
 	    margin: 0px 0px;
 	    cursor: pointer;
-	    border: 2px solid #BDBDBD;
+	    border: 2px solid #4a4f54;
 	    align-content: center;
 	    width: 100%;
 	}

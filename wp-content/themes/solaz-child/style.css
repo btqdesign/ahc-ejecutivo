@@ -66,6 +66,10 @@ a:hover{
 	text-decoration-line: underline;
 }
 
+h1.header-logo{
+	background: black; 
+}
+
 textarea.wpcf7-form-control.wpcf7-textarea.form-control.placeholder{
     height: 150px;
 }

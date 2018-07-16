@@ -55,6 +55,7 @@ ul#menu-subheader-menu{
 /* Submenu */
 
 .menu-subheader_menu-container, .menu-subheader_menu_en-container{
+	text-decoration-color: white;
 	padding-top: 21.5px;
 	padding-bottom: 21.5px;
 }

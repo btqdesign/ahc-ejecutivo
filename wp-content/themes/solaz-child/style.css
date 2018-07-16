@@ -58,6 +58,13 @@ ul#menu-subheader-menu{
 	padding-top: 21.5px;
 	padding-bottom: 21.5px;
 }
+a{
+color:#909090;
+}
+a:hover{
+	color:white;
+	text-decoration-line: underline;
+}
 
 textarea.wpcf7-form-control.wpcf7-textarea.form-control.placeholder{
     height: 150px;

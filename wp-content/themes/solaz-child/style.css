@@ -67,7 +67,7 @@ a:hover{
 }
 
 h1.header-logo{
-	background: black; 
+	background-color: black !important; 
 }
 
 textarea.wpcf7-form-control.wpcf7-textarea.form-control.placeholder{

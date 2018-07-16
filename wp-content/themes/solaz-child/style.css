@@ -59,7 +59,7 @@ ul#menu-subheader-menu{
 	padding-bottom: 21.5px;
 }
 a{
-color:white !important;
+color:white;
 }
 
 textarea.wpcf7-form-control.wpcf7-textarea.form-control.placeholder{

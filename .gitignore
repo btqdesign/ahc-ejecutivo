@@ -29,3 +29,6 @@ info.php
 info-siwp.php
 
 .htpasswd
+
+wp-content/plugins/btq-booking-tc/assets/js/btq-unavailable.json
+wp-content/plugins/btq-booking/assets/js/btq-unavailable.json

@@ -1,6 +1,7 @@
 <?php 
 $solaz_settings = solaz_check_theme_options(); 
 
+// Determina el idioma en uso
 $wpml_current_language = apply_filters( 'wpml_current_language', NULL );
 if (!empty($wpml_current_language)){
 	$language = $wpml_current_language;
@@ -12,6 +13,7 @@ else {
 	$language = 'es';
 }
 
+// De acuerdo al idioma establece el Container ID de Google Tag Manager
 if($language == 'es'){
 	// Español
 	$GoogleTagManagerContainerID = 'GTM-WJ6TCH';
@@ -21,6 +23,7 @@ else{
 	$GoogleTagManagerContainerID = 'GTM-PZSL38';
 }
 
+// Establece el Google Tag Manager del header
 $GoogleTagManagerHead = "
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -31,13 +34,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 ";
 
+// Establece el Google Tag Manager del body
 $GoogleTagManagerBody = '
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=' . $GoogleTagManagerContainerID . '
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 ';
-}
 
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>

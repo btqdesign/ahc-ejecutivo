@@ -1,5 +1,5 @@
 <?php 
-$solaz_settings = solaz_check_theme_options(); 
+$solaz_settings = solaz_check_theme_options();
 
 // Determina el idioma en uso
 $wpml_current_language = apply_filters( 'wpml_current_language', NULL );

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: BTQ Popup
- * Plugin URI: https://granhotel.idevol.net/wp-content/plugins/btq-popup/btq-popup.html
+ * Plugin URI: https://ejecutivo.idevol.net/wp-content/plugins/btq-popup/btq-popup.html
  * Description: Popup autodesplegable.
  * Version: 1.0
  * Author: BTQ Design

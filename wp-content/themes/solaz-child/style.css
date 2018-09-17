@@ -73,7 +73,6 @@ h1.header-logo{
 .dropdown-menu {
         min-width: 140px;
         text-align: right;
-        right: -30px !important;
 }
 
 @media (min-width: 1231px) {

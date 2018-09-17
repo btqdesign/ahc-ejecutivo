@@ -49,6 +49,7 @@ add_action( 'wp_enqueue_scripts', 'btq_popup_scripts',1004);
 function btq_popup() {
 	$language = btq_popup_current_language_code();
 	?>
+	<div class="general">
 	<!-- BTQ Popup -->
 	<div class="modal fade" id="Top5razones" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered btq-popup" role="document">
@@ -88,6 +89,7 @@ function btq_popup() {
 				</div>
 			</div>
 		</div>
+	</div>
 	</div>
 	<!-- BTQ Popup -->
 	<?php

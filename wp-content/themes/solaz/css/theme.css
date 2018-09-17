@@ -736,6 +736,7 @@ header .close_mini_special, .footer .close_mini_special {
   -ms-transform: translateY(-50%);
   -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
+  z-index: 900;
 }
 .header-v1 .languges-flags + .mini-cart {
   right: 97px; }
@@ -2206,7 +2207,7 @@ footer .widget_tag_cloud {
   position: absolute;
   right: 0;
   background: none;
-  z-index: 9900;
+  z-index: 900;
   -webkit-transition: all 0.5s ease-in-out 0s;
   -moz-transition: all 0.5s ease-in-out 0s;
   -ms-transition: all 0.5s ease-in-out 0s;
@@ -10429,7 +10430,6 @@ aside.widget .hotel-booking-search .hb-submit {
       padding: 5px 15px 0; }
     .header-v1.site-header .languges-flags {
       border-left: none;
-      right: 4px;
       top: 50%;
       padding: 36px 20px; }
       .header-v1.site-header .languges-flags + .mini-cart {

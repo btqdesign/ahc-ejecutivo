@@ -10430,6 +10430,7 @@ aside.widget .hotel-booking-search .hb-submit {
       padding: 5px 15px 0; }
     .header-v1.site-header .languges-flags {
       border-left: none;
+      right: 4px;
       top: 50%;
       padding: 36px 20px; }
       .header-v1.site-header .languges-flags + .mini-cart {

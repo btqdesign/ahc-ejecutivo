@@ -2,12 +2,12 @@
 
 // Aqui se inicializa firebase
 var config = {
-	apiKey: "AIzaSyAJKAc_-VwG7Lt_LeSjbNnr8LEzms1WJxk",
-	authDomain: "btq-ahm-gran-hotel.firebaseapp.com",
-	databaseURL: "https://btq-ahm-gran-hotel.firebaseio.com",
-	projectId: "btq-ahm-gran-hotel",
-	storageBucket: "btq-ahm-gran-hotel.appspot.com",
-	messagingSenderId: "241886061865"
+  apiKey: "AIzaSyD1-b4JUzq7wtRubABvYYFQlLw6ORZaSVU",
+  authDomain: "btq-ahc-ejecutivo.firebaseapp.com",
+  databaseURL: "https://btq-ahc-ejecutivo.firebaseio.com",
+  projectId: "btq-ahc-ejecutivo",
+  storageBucket: "btq-ahc-ejecutivo.appspot.com",
+  messagingSenderId: "1046665955624"
 };
 firebase.initializeApp(config);
 

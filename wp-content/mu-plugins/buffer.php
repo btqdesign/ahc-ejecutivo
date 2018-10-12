@@ -57,8 +57,8 @@ add_filter('final_output', function($output) {
 });
 
 add_filter('wp_redirect', function($output) {
-	$output = str_replace('http://ejecutivo.idevol.net',    'https://ejecutivo.idevol.net',    $output);
-	$output = str_replace('http://hotelelejecutivo.com.mx', 'https://hotelelejecutivo.com.mx', $output);
+	//$output = str_replace('http://ejecutivo.idevol.net',    'https://ejecutivo.idevol.net',    $output);
+	//$output = str_replace('http://hotelelejecutivo.com.mx', 'https://hotelelejecutivo.com.mx', $output);
 	  
 	return $output;
 });
